@@ -1,0 +1,40 @@
+array of points
+when clicked iterate through them to see if they are close enough
+else iterate through lines
+
+onclick() {
+  if (doubleClick && clickPos == getPos()) {
+    //do double click action
+    return;
+  }
+  clickPos = getPos();
+}
+
+onFrame() {
+  if (clicked && getPos() != clickPos) {
+    //drag preview
+  }
+}
+
+onRelease() {
+  if (getPos() != clickPos) {
+    //drag release
+    return;
+  }
+  if (pressedForAWhile) {
+    //long press
+    return;
+  }
+  let clickedObj = getObject();
+  //if point or line then select
+  if (clickedObj.type == "point") {
+    select(clickedObj);
+  }
+  if (clickedObj.type == "line") {
+    select(clickedObj);
+  }
+  //if clicked on grid then add point
+  if (clickedObj.type == "grid" && clickedObj.distance(getPos()) < 20) {
+    clickedObj.addPoint(getPos());
+  }
+}

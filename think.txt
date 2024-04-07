@@ -1,0 +1,30 @@
+array of points
+when clicked iterate through them to see if they are close enough
+else iterate through lines
+
+onclick() {
+  if (doubleClick && clickedObject == getObject()) {
+    //do double click action
+    return;
+  }
+  clickedObject = getObject();
+  clickPos = getPos();
+}
+
+onFrame() {
+  if (clicked && getPos() != clickPos) {
+    //drag preview
+  }
+}
+
+onRelease() {
+  if (getPos() != clickPos) {
+    //drag release
+    return;
+  }
+  if (pressedForAWhile) {
+    //long press
+    return;
+  }
+  //normal press
+}
