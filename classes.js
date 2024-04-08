@@ -1,3 +1,5 @@
+var elements = [];
+
 class Element {
   x;
   y;
@@ -9,6 +11,7 @@ class Element {
     this.y = y;
     this.wid = wid;
     this.hei = hei;
+    elements.push(this);
   }
 
   move(x, y, wid, hei) {
@@ -86,16 +89,29 @@ class Grid extends Element {
   }
 
   onClick() {
-    console.log(points);
+    if (grid.isInside(mouse.x, mouse.y, 30)) {
+      // console.log(grid.getClosestOnGrid(mouse.x, mouse.y, true));
+      let newPoint = new Point(...grid.getClosestOnGrid(mouse.x, mouse.y, true))
+      points.push(newPoint);
+      if (mouse.selected != null) {
+        let newLine = new Line(mouse.selected, newPoint)
+        lines.push(newLine);
+      }
+      mouse.selected = newPoint;
+    }
   }
 }
 
 class Point extends Element {
   control = false;
   size = 15;
+  posX = 0;
+  posY = 0;
 
   constructor(x, y) {
     super(x, y, 0, 0);
+    this.posX = x;
+    this.posY = y;
     this.x -= this.size;
     this.y -= this.size;
     this.wid += this.size * 2;
@@ -108,19 +124,38 @@ class Point extends Element {
   //   this.control = control;
   // }
 
-  get posX() {
-    return this.x + this.size;
-  }
+  // get posX() {
+  //   return this.x + this.size;
+  // }
 
-  get posY() {
-    return this.y + this.size;
-  }
+  // get posY() {
+  //   return this.y + this.size;
+  // }
 
   render() {
     can2d.beginPath();
-    can2d.arc(this.x + this.size, this.y + this.size, this.size, 0, Math.PI * 2);
+    can2d.arc(this.posX, this.posY, this.size, 0, Math.PI * 2);
     can2d.fill();
     can2d.stroke();
+  }
+
+  update() {
+    if (mouse.selected == this) {
+      this.size = 20;
+    } else {
+      this.size = 15;
+    }
+  }
+
+  onClick() {
+    if (mouse.selected == this) {
+      mouse.selected = null;
+    } else {
+      if (mouse.selected != null) {
+        lines.push(new Line(mouse.selected, this))
+      }
+      mouse.selected = this;
+    }
   }
 }
 

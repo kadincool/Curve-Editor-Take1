@@ -29,17 +29,10 @@ function frame() {
   //mouse
   if (mouse.isClicked && !mouse.wasClicked) {
     // console.log("click start");
-    console.log(getSmallestElem(mouse.x, mouse.y));
-    grid.onClick();
-    if (grid.isInside(mouse.x, mouse.y, 30)) {
-      console.log(grid.getClosestOnGrid(mouse.x, mouse.y, true));
-      let newPoint = new Point(...grid.getClosestOnGrid(mouse.x, mouse.y, true))
-      points.push(newPoint);
-      if (mouse.selected != null) {
-        let newLine = new Line(mouse.selected, newPoint)
-        lines.push(newLine);
-      }
-      mouse.selected = newPoint;
+    let clicked = getSmallestElem(mouse.x, mouse.y);
+    // console.log(clicked);
+    if (clicked && clicked.onClick) {
+      clicked.onClick();
     }
     if (now - mouse.lastClicked < 250) {
       // console.log("double click");
@@ -65,6 +58,9 @@ function frame() {
   }
   mouse.wasClicked = mouse.isClicked;
 
+  //update elements
+  
+
   //draw
   can2d.fillStyle = "yellow";
   can2d.strokeStyle = "black";
@@ -84,31 +80,24 @@ function frame() {
     points[point].render();
   }
 
-  // can2d.beginPath();
-  // can2d.moveTo(mouse.startX, mouse.startY);
-  // can2d.lineTo(mouse.x, mouse.y);
-  // can2d.stroke();
-
   requestAnimationFrame(frame);
 }
 frame();
 
-function getSmallestElem(posX, posY) {
+function getSmallestElem(posX, posY, leniance = 30) {
   let out = null;
   let smallestSize = Infinity;
   
-  if (grid.isInside(posX, posY) && grid.weight < smallestSize) {
-    out = grid;
-    smallestSize = grid.weight;
+  for (let i = 0; i < elements.length; i++) {
+    if (elements[i].isInside(posX, posY, leniance) && elements[i].weight < smallestSize) {
+      out = elements[i];
+      smallestSize = elements[i].weight;
+    }
   }
   return out;
 }
 
 document.addEventListener("mousedown", (e) => {
-  // if (grid.isInside(e.offsetX, e.offsetY, 30)) {
-  //   console.log(grid.getClosestOnGrid(e.offsetX, e.offsetY, true));
-  //   points.push(new Point(...grid.getClosestOnGrid(e.offsetX, e.offsetY, true)))
-  // }
   mouse.isClicked = true;
   mouse.startClicked = Date.now();
   mouse.startX = e.offsetX;
